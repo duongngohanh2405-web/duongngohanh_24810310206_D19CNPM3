@@ -4,6 +4,6 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Xin chao MaSV_HoVaTen!");
+        Console.WriteLine("Xin chao 24810310206_duongngohanh");
     }
 }
