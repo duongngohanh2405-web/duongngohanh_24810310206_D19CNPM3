@@ -1,0 +1,104 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+struct VeMayBay {
+    int maVe;
+    string khoiHanh;
+    string den;
+    double giaVe;
+};
+
+void nhapMang(VeMayBay ve[], int n) {
+    for (int i = 0; i < n; i++) {
+        cout << "\nVe thu " << i + 1 << ":\n";
+        cout << "Ma ve: "; cin >> ve[i].maVe; cin.ignore();
+        cout << "Khoi hanh: "; getline(cin, ve[i].khoiHanh);
+        cout << "Den: "; getline(cin, ve[i].den);
+        cout << "Gia ve: "; cin >> ve[i].giaVe; cin.ignore();
+    }
+}
+
+void xuatMang(VeMayBay ve[], int n) {
+    cout << left << setw(8) << "Ma ve" << setw(15) << "Khoi hanh"
+         << setw(15) << "Den" << setw(12) << "Gia ve" << "\n";
+    cout << string(50, '-') << "\n";
+    for (int i = 0; i < n; i++) {
+        cout << left << setw(8) << ve[i].maVe << setw(15) << ve[i].khoiHanh
+             << setw(15) << ve[i].den << setw(12) << fixed << setprecision(1)
+             << ve[i].giaVe << "\n";
+    }
+}
+
+void hoanVi(VeMayBay &a, VeMayBay &b) {
+    VeMayBay t = a; a = b; b = t;
+}
+
+int phanHoach(VeMayBay ve[], int low, int high) {
+    double pivot = ve[high].giaVe;
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (ve[j].giaVe <= pivot) {
+            i++;
+            hoanVi(ve[i], ve[j]);
+        }
+    }
+    hoanVi(ve[i + 1], ve[high]);
+    return i + 1;
+}
+
+void quickSort(VeMayBay ve[], int low, int high) {
+    if (low < high) {
+        int p = phanHoach(ve, low, high);
+        quickSort(ve, low, p - 1);
+        quickSort(ve, p + 1, high);
+    }
+}
+
+int timNhiPhan(VeMayBay ve[], int low, int high, double X) {
+    if (low > high) return -1;
+    int mid = (low + high) / 2;
+    if (ve[mid].giaVe == X) return mid;
+    else if (ve[mid].giaVe < X) return timNhiPhan(ve, mid + 1, high, X);
+    else return timNhiPhan(ve, low, mid - 1, X);
+}
+
+void timVaHienThiTheoGia(VeMayBay ve[], int n, double X) {
+    int viTri = timNhiPhan(ve, 0, n - 1, X);
+    if (viTri == -1) {
+        cout << "\nKhong tim thay ve nao co gia = " << X << "\n";
+        return;
+    }
+    int trai = viTri;
+    while (trai - 1 >= 0 && ve[trai - 1].giaVe == X) trai--;
+    int phai = viTri;
+    while (phai + 1 < n && ve[phai + 1].giaVe == X) phai++;
+
+    cout << "\nCac ve co gia = " << X << ":\n";
+    xuatMang(ve + trai, phai - trai + 1);
+}
+
+int main() {
+    int n;
+    cout << "Nhap so luong ve: ";
+    cin >> n;
+
+    VeMayBay *ve = new VeMayBay[n];
+
+    nhapMang(ve, n);
+    cout << "\n== Danh sach ve vua nhap ==\n";
+    xuatMang(ve, n);
+
+    quickSort(ve, 0, n - 1);
+    cout << "\n== Danh sach sau khi sap xep theo gia tang dan ==\n";
+    xuatMang(ve, n);
+
+    double X;
+    cout << "\nNhap gia ve X can tim: ";
+    cin >> X;
+    timVaHienThiTheoGia(ve, n, X);
+
+    delete[] ve;
+    return 0;
+}
+
